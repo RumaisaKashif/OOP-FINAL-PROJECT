@@ -38,9 +38,7 @@ The project utilizes an Object Oriented Programming approach to develop a menstr
 - Choose "Exit" from the main menu to quit the application.
 
 ### Hurdles
--
--
--
+Designing a user interface that effectively incorporates key object-oriented programming (OOP) concepts while enhancing user-friendliness and organization posed significant challenges during the project development.
 
 ### Future Improvements
 - Include charts and graphs for visualizing menstrual cycle data.

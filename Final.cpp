@@ -606,11 +606,14 @@ private:
         cout << "- Take a warm bath" << endl;
         cout << "- Practice relaxation techniques such as deep breathing" << endl;
         cout << "- Take pain relievers such as ibuprofen or acetaminophen" << endl;
-        cout << "On a scale of 1 to 4, how severe are your cramps? (1 being mild, 4 being severe): ";
+        cout << "\n\n On a scale of 1 to 4, how severe are your cramps? (1 being mild, 4 being severe): ";
         int severity;
         cin >> severity;
         if (severity >= 3) {
             cout << "Consider consulting a healthcare provider for further evaluation and treatment." << endl;
+        }
+        if(severity=1||2){
+            cout<<"\n-Pain should subside in a few hours take pain killers according to doctor"<<endl;
         }
     }
 

@@ -1,5 +1,5 @@
-# MenTor: Menstrual Cycle Tracking Program
-## PROJECT REPORT
+# PROJECT REPORT
+## MenTor: Menstrual Cycle Tracking Program
 
 ### Contributors
 

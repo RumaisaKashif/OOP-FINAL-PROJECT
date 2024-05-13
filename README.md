@@ -9,25 +9,25 @@ The project utilizes an Object Oriented Programming approach to develop a menstr
 | Areeba Hasnain   | 23K-0059     |
 | Rumaisa Kashif   | 23K-0744     |
 
-### Features
+## Features
 - **Symptom Management:** Users can get recommendations for managing various symptoms such as headaches, cramps, fatigue, acne, etc.
 - **Phase Data Recording:** Users can record data for each phase of their menstrual cycle, including symptoms and dates.
 - **Data Storage:** Recorded data is stored in separate text files for each phase.
 - **User-Friendly Interface:** The application provides a simple and intuitive menu-driven interface for ease of use.
 
-### Usage
-#### 1. Symptom Management
+## Usage
+### 1. Symptom Management
 - Choose "Symptom Management" from the main menu.
 - Select a symptom from the list and follow the recommendations provided.
 
-#### 2. Phase Data Recording
+### 2. Phase Data Recording
 - Choose the phase for which you want to record data (Follicular, Ovulation, Luteal, or Menstrual).
 - Follow the prompts to record symptoms and dates for the selected phase.
 
-#### 3. Exit
+### 3. Exit
 - Choose "Exit" from the main menu to quit the application.
 
 
-### Requirements
+## Requirements
 - C++ compiler (GCC recommended)
 - Standard C++ libraries

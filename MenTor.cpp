@@ -8,6 +8,9 @@
 
 using namespace std;
 
+// Forward declaration of validateDateInput function
+string validateDateInput();
+
 class CyclePhase {
 public:
     virtual void recordData() = 0;
@@ -17,6 +20,44 @@ public:
     virtual void recordDates() = 0;
 };
 
+// Declaration of validateDateInput function
+string validateDateInput() {
+    string date;
+    regex datePattern("((0?[1-9])|(1[0-2]))/((0?[1-9])|([1-2][0-9])|(3[0-1]))/([0-9]{4})");
+    while (true) {
+        cin >> date;
+        if (regex_match(date, datePattern)) {
+            // Extract month, day, and year from the date string
+            int month = stoi(date.substr(0, 2));
+            int day = stoi(date.substr(3, 2));
+            int year = stoi(date.substr(6, 4));
+
+            // Get current system date
+            time_t now = time(0);
+            tm *ltm = localtime(&now);
+            int currentYear = 1900 + ltm->tm_year;
+            int currentMonth = 1 + ltm->tm_mon;
+            int currentDay = ltm->tm_mday;
+
+            // Check if the entered date is in the future or if the month days are accurate
+            if (year > currentYear ||
+                (year == currentYear && month > currentMonth) ||
+                (year == currentYear && month == currentMonth && day > currentDay) ||
+                day < 1 ||
+                day > 31 ||
+                (month == 2 && day > 28) ||
+                ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)) {
+                cout << "Invalid date. Please enter a valid date: ";
+                continue;
+            }
+            break;
+        } else {
+            cout << "Invalid date format. Please enter in MM/DD/YYYY format: ";
+        }
+    }
+    return date;
+}
+
 class FollicularPhase : public CyclePhase {
 public:
     void recordData() override {
@@ -24,61 +65,45 @@ public:
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
-        bool flag=false;
-        try{
+        bool flag = false;
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordSymptoms();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
                 throw("No symptom to append file.\n");
-            }
-            else{
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
-        try{
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordDates();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
                 throw("No date to append file.\n");
-            }
-            else{
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try{
+        try {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to follicular_data.txt\n");
-        }
-        catch(const char *msg)
-        {
-            cout<<msg;
+        } catch (const char* msg) {
+            cout << msg;
         }
     }
 
@@ -108,43 +133,7 @@ public:
         endDate = validateDateInput();
     }
 
-    string validateDateInput() {
-    string date;
-    regex datePattern("(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/([0-9]{4})");
-    while (true) {
-        cin >> date;
-        if (regex_match(date, datePattern)) {
-            // Extract month, day, and year from the date string
-            int month = stoi(date.substr(0, 2));
-            int day = stoi(date.substr(3, 2));
-            int year = stoi(date.substr(6, 4));
-            
-            // Get current system date
-            time_t now = time(0);
-            tm *ltm = localtime(&now);
-            int currentYear = 1900 + ltm->tm_year;
-            int currentMonth = 1 + ltm->tm_mon;
-            int currentDay = ltm->tm_mday;
-            
-            // Check if the entered date is in the future or if the month days are accurate
-            if (year > currentYear || 
-                (year == currentYear && month > currentMonth) || 
-                (year == currentYear && month == currentMonth && day > currentDay) || 
-                day < 1 || 
-                day > 31 || 
-                (month == 2 && day > 28) || 
-                ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)) {
-                cout << "Invalid date. Please enter a valid date: ";
-                continue;
-            }
-            break;
-        } else {
-            cout << "Invalid date format. Please enter in MM/DD/YYYY format: ";
-        }
-    }
-    return date;
-}
-
+    friend string validateDateInput();
 
     void storeDataToFile() override {
         ofstream file("follicular_data.txt", ios_base::app); // Open a file for appending
@@ -160,7 +149,7 @@ public:
                     }
                 }
                 file << "+---------------------+---------------------+---------------------+" << endl; // Bottom border
-                file << endl; 
+                file << endl;
             }
             file.close(); // Close the file
             cout << "\nData appended to follicular_data.txt" << endl;
@@ -182,61 +171,45 @@ public:
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
-        bool flag=false;
-        try{
+        bool flag = false;
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordSymptoms();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
                 throw("No symptom to append file.\n");
-            }
-            else{
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
-        try{
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordDates();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
-                throw("No date to append to file.\n");
-            }
-            else{
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
+                throw("No date to append file.\n");
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try{
+        try {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to ovulation_data.txt\n");
-        }
-        catch(const char *msg)
-        {
-            cout<<msg;
+        } catch (const char* msg) {
+            cout << msg;
         }
     }
 
@@ -266,19 +239,7 @@ public:
         endDate = validateDateInput();
     }
 
-    string validateDateInput() {
-        string date;
-        regex datePattern("(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/([0-9]{4})");
-        while (true) {
-            cin >> date;
-            if (regex_match(date, datePattern)) {
-                break;
-            } else {
-                cout << "Invalid date format. Please enter in MM/DD/YYYY format: ";
-            }
-        }
-        return date;
-    }
+    friend string validateDateInput();
 
     void storeDataToFile() override {
         ofstream file("ovulation_data.txt", ios_base::app); // Open a file for appending
@@ -294,7 +255,7 @@ public:
                     }
                 }
                 file << "+---------------------+---------------------+---------------------+" << endl; // Bottom border
-                file << endl; 
+                file << endl;
             }
             file.close(); // Close the file
             cout << "\nData appended to ovulation_data.txt" << endl;
@@ -316,61 +277,45 @@ public:
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
-        bool flag=false;
-        try{
+        bool flag = false;
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordSymptoms();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
                 throw("No symptom to append file.\n");
-            }
-            else{
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
-        try{
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordDates();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
-                throw("No date to append to file.\n");
-            }
-            else{
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
+                throw("No date to append file.\n");
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try{
+        try {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to luteal_data.txt\n");
-        }
-        catch(const char *msg)
-        {
-            cout<<msg;
+        } catch (const char* msg) {
+            cout << msg;
         }
     }
 
@@ -400,19 +345,7 @@ public:
         endDate = validateDateInput();
     }
 
-    string validateDateInput() {
-        string date;
-        regex datePattern("(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/([0-9]{4})");
-        while (true) {
-            cin >> date;
-            if (regex_match(date, datePattern)) {
-                break;
-            } else {
-                cout << "Invalid date format. Please enter in MM/DD/YYYY format: ";
-            }
-        }
-        return date;
-    }
+    friend string validateDateInput();
 
     void storeDataToFile() override {
         ofstream file("luteal_data.txt", ios_base::app); // Open a file for appending
@@ -428,7 +361,7 @@ public:
                     }
                 }
                 file << "+---------------------+---------------------+---------------------+" << endl; // Bottom border
-                file << endl; 
+                file << endl;
             }
             file.close(); // Close the file
             cout << "\nData appended to luteal_data.txt" << endl;
@@ -450,63 +383,46 @@ public:
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
-        bool flag=false;
-        try{
+        bool flag = false;
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordSymptoms();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
                 throw("No symptom to append file.\n");
-            }
-            else{
+            } else {
                 throw("Invalid choice.\n");
             }
-        }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
-        try{
+        try {
             if (choice == 'y' || choice == 'Y') {
                 recordDates();
-                flag=true;
-            }
-            else if (choice== 'n' || choice =='N')
-            {
-                throw("No date to append to file.\n");
-            }
-            else{
+                flag = true;
+            } else if (choice == 'n' || choice == 'N') {
+                throw("No date to append file.\n");
+            } else {
                 throw("Invalid choice.\n");
             }
+        } catch (const char* msg) {
+            cout << msg;
+        } catch (...) {
+            cout << "Invalid choice.\n";
         }
-        catch(const char* msg)
-        {
-            cout<<msg;
-        }
-        catch(...)
-        {
-            cout<<"Invalid choice.\n";
-        }
-        // Store the recorded data in file
-        try{
+        // Store the recorded data in files
+        try {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to menstrual_data.txt\n");
+        } catch (const char* msg) {
+            cout << msg;
         }
-        catch(const char *msg)
-        {
-            cout<<msg;
-        }
-
     }
 
     string getName() override {
@@ -535,19 +451,7 @@ public:
         endDate = validateDateInput();
     }
 
-    string validateDateInput() {
-        string date;
-        regex datePattern("(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/([0-9]{4})");
-        while (true) {
-            cin >> date;
-            if (regex_match(date, datePattern)) {
-                break;
-            } else {
-                cout << "Invalid date format. Please enter in MM/DD/YYYY format: ";
-            }
-        }
-        return date;
-    }
+    friend string validateDateInput();
 
     void storeDataToFile() override {
         ofstream file("menstrual_data.txt", ios_base::app); // Open a file for appending
@@ -563,7 +467,7 @@ public:
                     }
                 }
                 file << "+---------------------+---------------------+---------------------+" << endl; // Bottom border
-                file << endl; 
+                file << endl;
             }
             file.close(); // Close the file
             cout << "\nData appended to menstrual_data.txt" << endl;
@@ -576,7 +480,6 @@ private:
     string startDate;
     string endDate;
     vector<string> symptoms;
-
 };
 
 class SymptomTracker {
@@ -587,10 +490,15 @@ public:
         cout << "1. Headaches" << endl;
         cout << "2. Cramps" << endl;
         cout << "3. Diarrhea" << endl;
-        cout << "4. Other" << endl;
+        cout << "4. Fatigue" << endl;
+        cout << "5. Backache" << endl;
+        cout << "6. Acne" << endl;
+        cout << "7. Cravings" << endl;
+        cout << "8. Insomnia" << endl;
+        cout << "9. Other" << endl;
 
         int choice;
-        cout << "Enter your choice (1-4): ";
+        cout << "Enter your choice (1-9): ";
         cin >> choice;
 
         switch (choice) {
@@ -604,6 +512,21 @@ public:
                 recommendDiarrhea();
                 break;
             case 4:
+                recommendFatigue();
+                break;
+            case 5:
+                recommendBackache();
+                break;
+            case 6:
+                recommendAcne();
+                break;
+            case 7:
+                recommendCravings();
+                break;
+            case 8:
+                recommendInsomnia();
+                break;
+            case 9:
                 recommendOther();
                 break;
             default:
@@ -632,8 +555,8 @@ private:
         if (severity >= 3) {
             cout << "Consider consulting a healthcare provider for further evaluation and treatment." << endl;
         }
-        if(severity=1||2){
-            cout<<"\n-Pain should subside in a few hours take pain killers according to doctor"<<endl;
+        if (severity == 1 || severity == 2) {
+            cout << "\n-Pain should subside in a few hours take pain killers according to doctor" << endl;
         }
     }
 
@@ -645,16 +568,66 @@ private:
         cout << "- Consider taking over-the-counter medications such as loperamide (Imodium) to help reduce diarrhea" << endl;
     }
 
+    static void recommendFatigue() {
+        cout << "Recommendations for fatigue:" << endl;
+        cout << "- Ensure you're getting enough sleep each night" << endl;
+        cout << "- Take short breaks during the day to rest" << endl;
+        cout << "- Stay hydrated and eat a balanced diet" << endl;
+        cout << "- Consider light exercise, such as walking, to boost energy levels" << endl;
+    }
+
+    static void recommendBackache() {
+        cout << "Recommendations for backache:" << endl;
+        cout << "- Practice good posture" << endl;
+        cout << "- Use ergonomic chairs or back supports" << endl;
+        cout << "- Apply heat or cold packs to the affected area" << endl;
+        cout << "- Perform gentle stretches and exercises to strengthen the back muscles" << endl;
+    }
+
+    static void recommendAcne() {
+        cout << "Recommendations for acne:" << endl;
+        cout << "- Cleanse your skin regularly with a gentle cleanser" << endl;
+        cout << "- Avoid touching your face too often" << endl;
+        cout << "- Use non-comedogenic moisturizers and makeup products" << endl;
+        cout << "- Consider over-the-counter acne treatments containing benzoyl peroxide or salicylic acid" << endl;
+    }
+
+    static void recommendCravings() {
+        cout << "Recommendations for cravings:" << endl;
+        cout << "- Opt for healthier alternatives to satisfy cravings, such as fruits or nuts" << endl;
+        cout << "- Practice portion control to avoid overeating" << endl;
+        cout << "- Keep yourself busy with activities to distract from cravings" << endl;
+        cout << "- Address underlying emotional triggers for cravings through mindfulness or therapy" << endl;
+    }
+
+    static void recommendInsomnia() {
+        cout << "Recommendations for insomnia:" << endl;
+        cout << "- Establish a regular sleep schedule and bedtime routine" << endl;
+        cout << "- Create a relaxing sleep environment, with minimal noise and light" << endl;
+        cout << "- Limit screen time before bed, as blue light can interfere with sleep" << endl;
+        cout << "- Consider relaxation techniques such as meditation or deep breathing exercises" << endl;
+    }
+
     static void recommendOther() {
         cout << "For other symptoms, it is recommended to consult a healthcare provider for personalized advice and treatment." << endl;
     }
 };
 
 int main() {
+    cout << "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥" << endl;
+    cout << "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥" << endl;
+    cout << "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥" << endl;
+    cout << "  - - - - - - - - - - - - - - - - - - -  " << endl;
+    cout << "      W e l c o m e   t o   M e n T o r  " << endl;
+    cout << "  - - - - - - - - - - - - - - - - - - -  " << endl;
+    cout << "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥" << endl;
+    cout << "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥" << endl;
+    cout << "♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥" << endl;
+    
     while (true) {
         int choice;
         cout << "\nMenu:" << endl;
-        cout << "1. Track Symptoms" << endl;
+        cout << "1. Symptom Management" << endl;
         cout << "2. Record Follicular Phase Data" << endl;
         cout << "3. Record Ovulation Phase Data" << endl;
         cout << "4. Record Luteal Phase Data" << endl;
@@ -688,7 +661,7 @@ int main() {
                 break;
             }
             case 6:
-                cout << "Exiting..." << endl;
+                cout << "\nThank you for using MenTor.\nExiting..." << endl;
                 return 0;
             default:
                 cout << "Invalid choice!" << endl;

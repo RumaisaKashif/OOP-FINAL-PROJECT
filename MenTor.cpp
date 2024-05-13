@@ -23,7 +23,9 @@ public:
 
 string validateDateInput() {
     string date;
+    // This regex matches MM/DD/YYYY format dates, with MM from 01 to 12, DD from 01 to 31, and YYYY being any four-digit year
     regex datePattern("((0?[1-9])|(1[0-2]))/((0?[1-9])|([1-2][0-9])|(3[0-1]))/([0-9]{4})");
+    
     while (true) 
     {
         cin >> date;

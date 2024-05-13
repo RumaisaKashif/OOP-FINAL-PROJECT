@@ -11,6 +11,7 @@ using namespace std;
 // Forward declaration of validateDateInput function
 string validateDateInput();
 
+// Interface
 class CyclePhase {
 public:
     virtual void recordData() = 0;
@@ -20,13 +21,14 @@ public:
     virtual void recordDates() = 0;
 };
 
-// Declaration of validateDateInput function
 string validateDateInput() {
     string date;
     regex datePattern("((0?[1-9])|(1[0-2]))/((0?[1-9])|([1-2][0-9])|(3[0-1]))/([0-9]{4})");
-    while (true) {
+    while (true) 
+    {
         cin >> date;
-        if (regex_match(date, datePattern)) {
+        if (regex_match(date, datePattern)) 
+        {
             // Extract month, day, and year from the date string
             int month = stoi(date.substr(0, 2));
             int day = stoi(date.substr(3, 2));
@@ -39,85 +41,115 @@ string validateDateInput() {
             int currentMonth = 1 + ltm->tm_mon;
             int currentDay = ltm->tm_mday;
 
-            // Check if the entered date is in the future or if the month days are accurate
+            // Check if the entered date is a date representing the future and if the days are accurate
             if (year > currentYear ||
                 (year == currentYear && month > currentMonth) ||
                 (year == currentYear && month == currentMonth && day > currentDay) ||
                 day < 1 ||
                 day > 31 ||
                 (month == 2 && day > 28) ||
-                ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)) {
-                cout << "Invalid date. Please enter a valid date: ";
-                continue;
-            }
+                ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)) 
+                {
+                    cout << "Invalid date. Please enter a valid date: ";
+                    continue;
+                }
             break;
-        } else {
-            cout << "Invalid date format. Please enter in MM/DD/YYYY format: ";
+        } 
+        else 
+        {
+            cout << "Invalid date format. Please enter date in MM/DD/YYYY format: ";
         }
     }
     return date;
 }
 
+// Class representing Phase 1 of the Menstrual Cycle
 class FollicularPhase : public CyclePhase {
 public:
-    void recordData() override {
+    void recordData() 
+    {
         cout << "Recording data for the Follicular Phase..." << endl;
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
         bool flag = false;
+        // Use exception handling to ensure accurate records
         try {
-            if (choice == 'y' || choice == 'Y') {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordSymptoms();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No symptom to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
         try {
-            if (choice == 'y' || choice == 'Y') {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordDates();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No date to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try {
+        try 
+        {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to follicular_data.txt\n");
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
         }
     }
 
-    string getName() override {
+    string getName() 
+    {
         return "Follicular Phase";
     }
 
-    void recordSymptoms() override {
+    void recordSymptoms() 
+    {
         cout << "Enter symptoms for the Follicular Phase (enter 'done' to finish): ";
         string symptom;
-        while (true) {
+        while (true) 
+        {
             cin >> symptom;
             if (symptom == "done") {
-                break; // Exit the loop if the user inputs "done"
+                break; // Exit the loop and stop recording symptoms.
             }
             symptoms.push_back(symptom);
         }
@@ -126,19 +158,23 @@ public:
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    void recordDates() override {
+    void recordDates() 
+    {
         cout << "Enter start date of the Follicular Phase (MM/DD/YYYY): ";
         startDate = validateDateInput();
         cout << "Enter end date of the Follicular Phase (MM/DD/YYYY): ";
         endDate = validateDateInput();
     }
 
+    // Utlising friend function
     friend string validateDateInput();
 
-    void storeDataToFile() override {
+    void storeDataToFile() 
+    {
         ofstream file("follicular_data.txt", ios_base::app); // Open a file for appending
         if (file.is_open()) {
             if (!symptoms.empty() || (!startDate.empty() && !endDate.empty())) {
+                // Formatting the .txt files into table format to make them more presentable for the user
                 file << "+---------------------+---------------------+---------------------+" << endl; // Top border
                 file << "| " << left << setw(20) << "Start Date" << "| " << setw(20) << "End Date" << "| " << setw(20) << "Symptoms" << "|" << endl;
                 file << "|---------------------|---------------------|---------------------|" << endl;
@@ -153,7 +189,9 @@ public:
             }
             file.close(); // Close the file
             cout << "\nData appended to follicular_data.txt" << endl;
-        } else {
+        } 
+        else 
+        {
             cerr << "Error: Unable to open file for writing" << endl;
         }
     }
@@ -164,46 +202,67 @@ private:
     vector<string> symptoms;
 };
 
+// Class representing Phase 2 of the Menstrual Cycle
 class OvulationPhase : public CyclePhase {
 public:
-    void recordData() override {
+    void recordData() 
+    {
         cout << "Recording data for the Ovulation Phase..." << endl;
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
         bool flag = false;
         try {
-            if (choice == 'y' || choice == 'Y') {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordSymptoms();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No symptom to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
         try {
-            if (choice == 'y' || choice == 'Y') {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordDates();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No date to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try {
+        try 
+        {
             if (flag)
                 storeDataToFile();
             else
@@ -213,17 +272,20 @@ public:
         }
     }
 
-    string getName() override {
+    string getName() 
+    {
         return "Ovulation Phase";
     }
 
-    void recordSymptoms() override {
+    void recordSymptoms() 
+    {
         cout << "Enter symptoms for the Ovulation Phase (enter 'done' to finish): ";
         string symptom;
-        while (true) {
+        while (true) 
+        {
             cin >> symptom;
             if (symptom == "done") {
-                break; // Exit the loop if the user inputs "done"
+                break; // Exit the loop and stop recording symptoms
             }
             symptoms.push_back(symptom);
         }
@@ -232,19 +294,24 @@ public:
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    void recordDates() override {
+    void recordDates() 
+    {
         cout << "Enter start date of the Ovulation Phase (MM/DD/YYYY): ";
         startDate = validateDateInput();
         cout << "Enter end date of the Ovulation Phase (MM/DD/YYYY): ";
         endDate = validateDateInput();
     }
 
+    // Utlising friend function to enhance code readability and reduce redundancy
     friend string validateDateInput();
 
-    void storeDataToFile() override {
+    void storeDataToFile() 
+    {
         ofstream file("ovulation_data.txt", ios_base::app); // Open a file for appending
         if (file.is_open()) {
-            if (!symptoms.empty() || (!startDate.empty() && !endDate.empty())) {
+            if (!symptoms.empty() || (!startDate.empty() && !endDate.empty())) 
+            {
+                // Formatting as table
                 file << "+---------------------+---------------------+---------------------+" << endl; // Top border
                 file << "| " << left << setw(20) << "Start Date" << "| " << setw(20) << "End Date" << "| " << setw(20) << "Symptoms" << "|" << endl;
                 file << "|---------------------|---------------------|---------------------|" << endl;
@@ -259,7 +326,9 @@ public:
             }
             file.close(); // Close the file
             cout << "\nData appended to ovulation_data.txt" << endl;
-        } else {
+        } 
+        else 
+        {
             cerr << "Error: Unable to open file for writing" << endl;
         }
     }
@@ -270,66 +339,92 @@ private:
     vector<string> symptoms;
 };
 
+// Class representing Phase 3 of the Menstrual Cycle
 class LutealPhase : public CyclePhase {
 public:
-    void recordData() override {
+    void recordData() 
+    {
         cout << "Recording data for the Luteal Phase..." << endl;
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
         bool flag = false;
-        try {
-            if (choice == 'y' || choice == 'Y') {
+        try 
+        {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordSymptoms();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No symptom to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
-        try {
-            if (choice == 'y' || choice == 'Y') {
+        try 
+        {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordDates();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') {
                 throw("No date to append file.\n");
-            } else {
+            } 
+            else {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try {
+        try 
+        {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to luteal_data.txt\n");
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
         }
     }
 
-    string getName() override {
+    string getName() 
+    {
         return "Luteal Phase";
     }
 
-    void recordSymptoms() override {
+    void recordSymptoms() 
+    {
         cout << "Enter symptoms for the Luteal Phase (enter 'done' to finish): ";
         string symptom;
         while (true) {
             cin >> symptom;
-            if (symptom == "done") {
-                break; // Exit the loop if the user inputs "done"
+            if (symptom == "done") 
+            {
+                break; // Exit the loop and stop recording symptoms
             }
             symptoms.push_back(symptom);
         }
@@ -338,18 +433,22 @@ public:
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    void recordDates() override {
+    void recordDates() 
+    {
         cout << "Enter start date of the Luteal Phase (MM/DD/YYYY): ";
         startDate = validateDateInput();
         cout << "Enter end date of the Luteal Phase (MM/DD/YYYY): ";
         endDate = validateDateInput();
     }
-
+    // Utilising friend function to enhance code readability and reduce redundancy
     friend string validateDateInput();
 
-    void storeDataToFile() override {
+    void storeDataToFile() 
+    {
         ofstream file("luteal_data.txt", ios_base::app); // Open a file for appending
-        if (file.is_open()) {
+        if (file.is_open()) 
+        {
+            // Formatting as table
             if (!symptoms.empty() || (!startDate.empty() && !endDate.empty())) {
                 file << "+---------------------+---------------------+---------------------+" << endl; // Top border
                 file << "| " << left << setw(20) << "Start Date" << "| " << setw(20) << "End Date" << "| " << setw(20) << "Symptoms" << "|" << endl;
@@ -365,7 +464,9 @@ public:
             }
             file.close(); // Close the file
             cout << "\nData appended to luteal_data.txt" << endl;
-        } else {
+        } 
+        else 
+        {
             cerr << "Error: Unable to open file for writing" << endl;
         }
     }
@@ -376,65 +477,94 @@ private:
     vector<string> symptoms;
 };
 
+// Class representing Phase 4 of the Menstrual Cycle
 class MenstrualPhase : public CyclePhase {
 public:
-    void recordData() override {
+    void recordData() 
+    {
         cout << "Recording data for the Menstrual Phase..." << endl;
         char choice;
         cout << "\nDo you want to record symptoms? (y/n): ";
         cin >> choice;
         bool flag = false;
-        try {
-            if (choice == 'y' || choice == 'Y') {
+        try 
+        {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordSymptoms();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No symptom to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         cout << "\nDo you want to record dates? (y/n): ";
         cin >> choice;
-        try {
-            if (choice == 'y' || choice == 'Y') {
+        try 
+        {
+            if (choice == 'y' || choice == 'Y') 
+            {
                 recordDates();
                 flag = true;
-            } else if (choice == 'n' || choice == 'N') {
+            } 
+            else if (choice == 'n' || choice == 'N') 
+            {
                 throw("No date to append file.\n");
-            } else {
+            } 
+            else 
+            {
                 throw("Invalid choice.\n");
             }
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             cout << "Invalid choice.\n";
         }
         // Store the recorded data in files
-        try {
+        try 
+        {
             if (flag)
                 storeDataToFile();
             else
                 throw("No data to append to menstrual_data.txt\n");
-        } catch (const char* msg) {
+        } 
+        catch (const char* msg) 
+        {
             cout << msg;
         }
     }
 
-    string getName() override {
+    string getName() 
+    {
         return "Menstrual Phase";
     }
 
-    void recordSymptoms() override {
+    void recordSymptoms() 
+    {
         cout << "Enter symptoms for the Menstrual Phase (enter 'done' to finish): ";
         string symptom;
-        while (true) {
+        while (true) 
+        {
             cin >> symptom;
-            if (symptom == "done") {
+            if (symptom == "done") 
+            {
                 break; // Exit the loop if the user inputs "done"
             }
             symptoms.push_back(symptom);
@@ -444,18 +574,22 @@ public:
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    void recordDates() override {
+    void recordDates() 
+    {
         cout << "Enter start date of the Menstrual Phase (MM/DD/YYYY): ";
         startDate = validateDateInput();
         cout << "Enter end date of the Menstrual Phase (MM/DD/YYYY): ";
         endDate = validateDateInput();
     }
 
+    // Utilising friend function to enhance code readability and reduce redundancy
     friend string validateDateInput();
 
-    void storeDataToFile() override {
+    void storeDataToFile() {
         ofstream file("menstrual_data.txt", ios_base::app); // Open a file for appending
-        if (file.is_open()) {
+        if (file.is_open()) 
+        {
+            // Formatting as table
             if (!symptoms.empty() || (!startDate.empty() && !endDate.empty())) {
                 file << "+---------------------+---------------------+---------------------+" << endl; // Top border
                 file << "| " << left << setw(20) << "Start Date" << "| " << setw(20) << "End Date" << "| " << setw(20) << "Symptoms" << "|" << endl;
@@ -471,7 +605,9 @@ public:
             }
             file.close(); // Close the file
             cout << "\nData appended to menstrual_data.txt" << endl;
-        } else {
+        } 
+        else 
+        {
             cerr << "Error: Unable to open file for writing" << endl;
         }
     }

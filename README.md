@@ -37,7 +37,9 @@ The project utilizes an Object Oriented Programming approach to develop a menstr
 - Choose "Exit" from the main menu to quit the application.
 
 ## Hurdles
-
+-
+-
+-
 
 ## Future Improvements
 - Include charts and graphs for visualizing menstrual cycle data.

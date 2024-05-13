@@ -1,5 +1,5 @@
 # MenTor: Menstrual Cycle Tracking Program
-The project utilizes an Object Oriented Programming approach to develop a menstrual cycle tracking program using C++. The program will comprise all four stages of the menstrual cycle: follicular, ovulation, luteal, and menstrual. The phases will be represented by derived classes of a root class (the 28-day menstrual cycle). The program is designed to offer recommendations for common symptoms experienced during their cycle and track the length of each phase for the monthly cycle.
+The project utilizes an Object Oriented Programming approach to develop a menstrual cycle tracking program using C++. The program comprises all four stages of the menstrual cycle: follicular, ovulation, luteal, and menstrual. These phases are represented by derived classes of a root class, the 28-day menstrual cycle. The program is designed to offer recommendations for common symptoms experienced during the cycle and track the length of each phase for the monthly cycle.
 
 ## Contributors
 
